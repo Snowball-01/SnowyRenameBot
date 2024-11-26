@@ -8,7 +8,7 @@ __pycache__/
 *.session
 *.session-journal
 *.log
-*.txt
+runtime.txt
 *.env
 # Ignore download folder (replace 'download' with the actual folder name if different)
 download/
