@@ -1,8 +1,8 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
-from helper.database import db
+from utility.database import db
 from config import Txt
-from pyromod.exceptions.listener_timeout import ListenerTimeout
+from pyrogram.errors import ListenerTimeout
 
 @Client.on_message(filters.private & filters.command('metadata'))
 async def handle_metadata(bot: Client, message: Message):

@@ -1,6 +1,6 @@
 import traceback
 from config import Config, Txt
-from helper.database import db
+from utility.database import db
 from pyrogram.types import Message
 from pyrogram import Client, filters
 from pyrogram.errors import (
@@ -12,7 +12,7 @@ from pyrogram.errors import (
 import os, sys, time, asyncio, logging, datetime
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from helper.utils import start_clone_bot, user_client
+from utility.utils import start_clone_bot, user_client
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

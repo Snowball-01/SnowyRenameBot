@@ -6,31 +6,11 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceRepl
 from pyrogram.errors import FloodWait
 from asyncio import sleep
 import humanize
-from helper.database import db
-from config import Config, Txt
-
-@Client.on_message(filters.private & filters.command("start"))
-async def start(client, message):
-    
-    user = message.from_user
-    await db.add_user(client, message)
-    button = InlineKeyboardMarkup([[
-        InlineKeyboardButton(
-            '⛅ ᴜᴘᴅᴀᴛᴇ', url='https://t.me/Kdramaland'),
-        InlineKeyboardButton(
-            '🌨️ sᴜᴘᴘᴏʀᴛ', url='https://t.me/SnowDevs')
-    ], [
-        InlineKeyboardButton('❗ ʜᴇʟᴘ', callback_data='help'),
-        InlineKeyboardButton('❄️ ᴀʙᴏᴜᴛ', callback_data='about')
-    ], [InlineKeyboardButton('⚙️ sᴇʀᴠᴇʀ sᴛᴀᴛs', callback_data='stats')]])
-    if Config.PICS:
-        await message.reply_photo(random.choice(Config.PICS), caption=Txt.START_TXT.format(user.mention), reply_markup=button)
-    else:
-        await message.reply_text(text=Txt.START_TXT.format(user.mention), reply_markup=button, disable_web_page_preview=True)
+from utility.database import db
+from config import Config, Txt, temp
 
 
-@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
-async def handle_manual_rename(client, message):
+async def manulaRenameFunc(client, message):
     file = getattr(message, message.media.value)
     filename = file.file_name
     filesize = humanize.naturalsize(file.file_size)
@@ -61,6 +41,30 @@ async def handle_manual_rename(client, message):
     except:
         pass
 
+@Client.on_message(filters.private & filters.command("start"))
+async def start(client, message):
+    
+    user = message.from_user
+    await db.add_user(client, message)
+    button = InlineKeyboardMarkup([[
+        InlineKeyboardButton(
+            '⛅ ᴜᴘᴅᴀᴛᴇ', url='https://t.me/Kdramaland'),
+        InlineKeyboardButton(
+            '🌨️ sᴜᴘᴘᴏʀᴛ', url='https://t.me/SnowDevs')
+    ], [
+        InlineKeyboardButton('❗ ʜᴇʟᴘ', callback_data='help'),
+        InlineKeyboardButton('❄️ ᴀʙᴏᴜᴛ', callback_data='about')
+    ], [InlineKeyboardButton('⚙️ sᴇʀᴠᴇʀ sᴛᴀᴛs', callback_data='stats')]])
+    if Config.PICS:
+        await message.reply_photo(random.choice(Config.PICS), caption=Txt.START_TXT.format(user.mention), reply_markup=button)
+    else:
+        await message.reply_text(text=Txt.START_TXT.format(user.mention), reply_markup=button, disable_web_page_preview=True)
+
+
+@Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
+async def handle_manual_rename(client, message):
+    await manulaRenameFunc(client, message)
+
 @Client.on_message(filters.private & filters.command("cc"))
 async def handle_cc(client, message):
     user_id = message.from_user.id
@@ -70,6 +74,12 @@ async def handle_cc(client, message):
 
         if os.path.exists(f"metadata/{user_id}"):
             shutil.rmtree(f"metadata/{user_id}")
+
+        if user_id in temp.AUTO_RENAME_QUEUE:
+            temp.AUTO_RENAME_QUEUE.pop(user_id)
+            
+        if user_id in temp.USERS_IN_QUEUE:
+            temp.USERS_IN_QUEUE.remove(user_id)
     except:
         return await  message.reply_text("**sᴏᴍᴇ ᴘʀᴏᴄᴇss ɪs ᴏɴɢᴏɪɴɢ ᴡɪᴛʜ ʏᴏᴜʀ ᴅᴀᴛᴀ ᴀɴᴅ ᴄᴀɴɴᴏᴛ ʙᴇ ᴄʟᴇᴀʀᴇᴅ. ❌**", reply_to_message_id=message.id)
         pass

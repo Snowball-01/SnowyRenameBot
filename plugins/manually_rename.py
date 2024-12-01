@@ -1,17 +1,16 @@
 import random
-from helper.ffmpeg import fix_thumb, take_screen_shot
+from utility.ffmpeg import fix_thumb, take_screen_shot
 from pyrogram import Client, filters
 from pyrogram.enums import MessageMediaType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ForceReply
 from hachoir.metadata import extractMetadata
 from hachoir.parser import createParser
-from helper.utils import progress_for_pyrogram, convert, humanbytes
-from helper.database import db
-from PIL import Image
+from utility.utils import progress_for_pyrogram, convert, humanbytes, uploadFiles
+from utility.database import db
 import asyncio
 import os
 import time
-from helper.utils import add_prefix_suffix, user_client, start_clone_bot
+from utility.utils import add_prefix_suffix
 from config import Config
 
 
@@ -78,15 +77,16 @@ async def doc(bot, update):
     file = update.message.reply_to_message
 
     ms = await update.message.edit("⚠️ ** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **\n** ᴛʀʏɪɴɢ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ... **")
+    
     try:
-        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("❄️ ** ᴅᴏᴡɴʟᴏᴀᴅ sᴛᴀʀᴛᴇᴅ... **", ms, time.time()))
+        path = await bot.download_media(message=file, file_name=file_path, progress=progress_for_pyrogram, progress_args=("> ❄️ ** ᴅᴏᴡɴʟᴏᴀᴅ sᴛᴀʀᴛᴇᴅ... **", ms, time.time()))
     except Exception as e:
         return await ms.edit(e)
 
     _bool_metadata = await db.get_metadata(update.message.chat.id)
-
+    metadata_path = f"metadata/{update.from_user.id}/{new_filename.strip()}"
+    
     if (_bool_metadata):
-        metadata_path = f"metadata/{update.from_user.id}/{new_filename.strip()}"
         metadata = await db.get_metadata_code(update.from_user.id)
         if metadata:
             await ms.edit("ɪ ғᴏᴜɴᴅ ʏᴏᴜʀ ᴍᴇᴛᴀᴅᴀᴛᴀ ᴄᴏᴅᴇ\n\n__** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **__\n** ᴀᴅᴅɪɴɢ ᴍᴇᴛᴀᴅᴛᴀ ᴛᴏ ᴛʜᴇ ғɪʟᴇ... **")
@@ -98,7 +98,6 @@ async def doc(bot, update):
 
             stdout, stderr = await process.communicate()
             er = stderr.decode().strip()
-            
             try:
                 if er:
                     await ms.edit(f"Error occurred:\n\n{er}\n\n**Error**")
@@ -111,172 +110,45 @@ async def doc(bot, update):
         await ms.edit("**ᴍᴇᴛᴀᴅᴀᴛᴀ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ғɪʟᴇ ✅**\n\n⚠️ __** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **__\n\n** ᴛʀʏɪɴɢ ᴛᴏ ᴜᴘʟᴏᴀᴅ.... **")
     else:
         await ms.edit("⚠️ __** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **__\n\n** ᴛʀʏɪɴɢ ᴛᴏ ᴜᴘʟᴏᴀᴅ.... **")
-
-    duration = 0
     try:
-        parser = createParser(file_path)
-        metadata = extractMetadata(parser)
-        if metadata.has("duration"):
-            duration = metadata.get('duration').seconds
-        parser.close()
-
-    except:
-        pass
-    ph_path = None
-    media = getattr(file, file.media.value)
-    c_caption = await db.get_caption(update.message.chat.id)
-    c_thumb = await db.get_thumbnail(update.message.chat.id)
-
-    if c_caption:
+        duration = 0
         try:
-            caption = c_caption.format(filename=new_filename, filesize=humanbytes(
-                media.file_size), duration=convert(duration))
-        except Exception as e:
-            return await ms.edit(text=f"Yᴏᴜʀ Cᴀᴩᴛɪᴏɴ Eʀʀᴏʀ Exᴄᴇᴩᴛ Kᴇyᴡᴏʀᴅ Aʀɢᴜᴍᴇɴᴛ ●> ({e})")
-    else:
-        caption = f"**{new_filename}**"
+            parser = createParser(file_path)
+            metadata = extractMetadata(parser)
+            if metadata.has("duration"):
+                duration = metadata.get('duration').seconds
+            parser.close()
 
-    if (media.thumbs or c_thumb):
-        if c_thumb:
-            ph_path = await bot.download_media(c_thumb)
-            width, height, ph_path = await fix_thumb(ph_path)
-        else:
+        except:
+            pass
+        ph_path = None
+        media = getattr(file, file.media.value)
+        c_caption = await db.get_caption(update.message.chat.id)
+        c_thumb = await db.get_thumbnail(update.message.chat.id)
+
+        if c_caption:
             try:
-                ph_path_ = await take_screen_shot(file_path, os.path.dirname(os.path.abspath(file_path)), random.randint(0, duration - 1))
-                width, height, ph_path = await fix_thumb(ph_path_)
+                caption = c_caption.format(filename=new_filename, filesize=humanbytes(
+                    media.file_size), duration=convert(duration))
             except Exception as e:
-                ph_path = None
-                print(e)
+                return await ms.edit(text=f"Yᴏᴜʀ Cᴀᴩᴛɪᴏɴ Eʀʀᴏʀ Exᴄᴇᴩᴛ Kᴇyᴡᴏʀᴅ Aʀɢᴜᴍᴇɴᴛ ●> ({e})")
+        else:
+            caption = f"**{new_filename}**"
 
-    type = update.data.split("_")[1]
-    user_bot = await db.get_user_bot(Config.ADMIN[0])
-
-    if media.file_size > 2000 * 1024 * 1024:
-        try:
-            if user_bot:
-                app = await start_clone_bot(user_client(user_bot['session']))
+        if (media.thumbs or c_thumb):
+            if c_thumb:
+                ph_path = await bot.download_media(c_thumb)
+                width, height, ph_path = await fix_thumb(ph_path)
             else:
-                if file_path:
-                    os.remove(file_path)
-                if ph_path:
-                    os.remove(ph_path)
-                if metadata_path:
-                    os.remove(metadata_path)
-                if path:
-                    os.remove(path)
-                return await update.message.reply_text("**⚠️ sᴏʀʀʏ ᴅᴇᴀʀ ᴛʜɪs ʙᴏᴛ ᴅᴏᴇsɴ'ᴛ sᴜᴘᴘᴏʀᴛ ғɪʟᴇs ʙɪɢɢᴇʀ ᴛʜᴀɴ 2ɢʙ **")
+                try:
+                    ph_path_ = await take_screen_shot(file_path, os.path.dirname(os.path.abspath(file_path)), random.randint(0, duration - 1))
+                    width, height, ph_path = await fix_thumb(ph_path_)
+                except Exception as e:
+                    ph_path = None
+                    print(e)
 
-            if type == "document":
-
-                filw = await app.send_document(
-                    Config.LOG_CHANNEL,
-                    document=metadata_path if _bool_metadata else file_path,
-                    thumb=ph_path,
-                    caption=caption,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
-
-                from_chat = filw.chat.id
-                mg_id = filw.id
-                time.sleep(2)
-                await bot.copy_message(update.from_user.id, from_chat, mg_id)
-                await ms.delete()
-                await bot.delete_messages(from_chat, mg_id)
-
-            elif type == "video":
-                filw = await app.send_video(
-                    Config.LOG_CHANNEL,
-                    video=metadata_path if _bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    width=width,
-                    height=height,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
-
-                from_chat = filw.chat.id
-                mg_id = filw.id
-                time.sleep(2)
-                await bot.copy_message(update.from_user.id, from_chat, mg_id)
-                await ms.delete()
-                await bot.delete_messages(from_chat, mg_id)
-            elif type == "audio":
-                filw = await app.send_audio(
-                    Config.LOG_CHANNEL,
-                    audio=metadata_path if _bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
-
-                from_chat = filw.chat.id
-                mg_id = filw.id
-                time.sleep(2)
-                await bot.copy_message(update.from_user.id, from_chat, mg_id)
-                await ms.delete()
-                await bot.delete_messages(from_chat, mg_id)
-
-            if user_bot:
-                await app.stop()
-            
-        except Exception as e:
-            os.remove(file_path)
-            if ph_path:
-                os.remove(ph_path)
-            if metadata_path:
-                os.remove(metadata_path)
-            if path:
-                os.remove(path)
-            return await ms.edit(f" Eʀʀᴏʀ {e}")
-
-    else:
-
-        try:
-            if type == "document":
-                await bot.send_document(
-                    update.message.chat.id,
-                    document=metadata_path if _bool_metadata else file_path,
-                    thumb=ph_path,
-                    caption=caption,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
-            elif type == "video":
-                await bot.send_video(
-                    update.message.chat.id,
-                    video=metadata_path if _bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    width=width,
-                    height=height,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
-            elif type == "audio":
-                await bot.send_audio(
-                    update.message.chat.id,
-                    audio=metadata_path if _bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time()))
-        except Exception as e: 
-            os.remove(file_path)
-            if ph_path:
-                os.remove(ph_path)
-            if metadata_path:
-                os.remove(metadata_path)
-            if path:
-                os.remove(path)
-            return await ms.edit(f" Eʀʀᴏʀ {e}")
-
-    await ms.delete()
-
-    if ph_path:
-        os.remove(ph_path)
-    if file_path:
-        os.remove(file_path)
-    if metadata_path:
-        os.remove(metadata_path)
+        type = update.data.split("_")[1]
+        user_bot = await db.get_user_bot(Config.ADMIN[0])
+        await uploadFiles(bot=bot, message=update.message, media=media, metadata_path=metadata_path, bool_metadata=_bool_metadata, file_path=file_path, ms=ms, ph_path=ph_path, caption=caption, width=width, height=height, path=path, duration=duration, user_bot=user_bot, type=type)
+    except Exception as e:
+        print(e)

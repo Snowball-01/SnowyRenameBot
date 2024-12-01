@@ -2,7 +2,7 @@ from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from pyrogram.errors import UserNotParticipant
 from config import Config
-from helper.database import db
+from utility.database import db
 
 async def not_subscribed(_, client, message):
     await db.add_user(client, message)
@@ -31,12 +31,11 @@ async def forces_sub(client:Client, message:Message):
         return await message.reply_text(text=text, reply_markup=InlineKeyboardMarkup(buttons))
     return await message.reply_text(text=text, reply_markup=InlineKeyboardMarkup(buttons))
           
-
 @Client.on_message(filters.private)
 async def handle_permit_user(client: Client, message: Message):
-    userId = str(message.from_user.id)
+    userId = message.from_user.id
     permitUser = await db.get_permit_user(Config.ADMIN[0])
-    if userId in permitUser or userId in Config.ADMIN:
+    if userId in list(map(int, permitUser)) or userId in Config.ADMIN:
         return await message.continue_propagation()
     
     else:

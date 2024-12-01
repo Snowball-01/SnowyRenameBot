@@ -5,13 +5,12 @@ from pyrogram.errors import FloodWait
 from pyrogram.raw.all import layer
 from config import Config
 from aiohttp import web
-from route import web_server
-from helper.database import db
+from utility import web_server
+from utility.database import db
 import pyrogram.utils
 import logging
 import logging.config
 import asyncio
-import pyromod.listen
 
 pyrogram.utils.MIN_CHANNEL_ID = -1009147483647
 
@@ -25,13 +24,14 @@ class Bot(Client):
 
     def __init__(self):
         super().__init__(
-            name="SnowyRenameBot",
+            name="SnowyRename",
             api_id=Config.API_ID,
             api_hash=Config.API_HASH,
             bot_token=Config.BOT_TOKEN,
             workers=200,
             plugins={"root": "plugins"},
             sleep_threshold=15,
+            max_concurrent_transmissions=64
         )
 
     async def start(self):

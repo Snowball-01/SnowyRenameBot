@@ -10,10 +10,10 @@ from pyrogram.types import (
     ForceReply,
 )
 from config import Config, Txt
-from helper.database import db
+from utility.database import db
 import random
 import psutil
-from helper.utils import humanbytes
+from utility.utils import humanbytes
 from plugins.features import feature_keyboard
 
 

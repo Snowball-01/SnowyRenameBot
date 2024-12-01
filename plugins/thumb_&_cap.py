@@ -1,5 +1,5 @@
 from pyrogram import Client, filters
-from helper.database import db
+from utility.database import db
 
 
 @Client.on_message(filters.private & filters.command('set_caption'))

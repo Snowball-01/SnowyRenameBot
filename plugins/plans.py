@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from helper.database import db
+from utility.database import db
 from config import Txt, Config
 
 

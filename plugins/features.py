@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import *
-from helper.database import db
+from utility.database import db
 
 
 async def feature_keyboard(user_id):

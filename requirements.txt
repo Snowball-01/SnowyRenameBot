@@ -1,4 +1,4 @@
-pyrogram==2.0.83
+pyrofork
 TgCrypto==1.2.5 
 motor==3.1.2
 pymongo==4.3.2
@@ -9,6 +9,5 @@ aiohttp==3.8.4
 pytz==2023.3
 psutil
 humanize
-pyromod==3.0.0
 ffmpeg-python
 python-dateutil

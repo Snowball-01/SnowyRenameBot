@@ -153,3 +153,5 @@ Hᴇʏ {},
 
 class temp(object):
     TEMPLATE_CHANNELS = {}
+    AUTO_RENAME_QUEUE = {}
+    USERS_IN_QUEUE = []
