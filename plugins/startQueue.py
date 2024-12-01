@@ -32,5 +32,5 @@ async def startQueue(client: Client, message: Message):
         disable_web_page_preview=True,
     )
     ## Clearing Queues
-    temp.AUTO_RENAME_QUEUE.pop(userId)
+    del temp.AUTO_RENAME_QUEUE[userId]
     temp.USERS_IN_QUEUE.remove(userId)
