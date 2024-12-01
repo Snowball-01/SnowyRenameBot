@@ -31,10 +31,12 @@ async def forces_sub(client:Client, message:Message):
         return await message.reply_text(text=text, reply_markup=InlineKeyboardMarkup(buttons))
     return await message.reply_text(text=text, reply_markup=InlineKeyboardMarkup(buttons))
           
-@Client.on_message(filters.private)
+@Client.on_message(filters.private | filters.text | filters.command)
 async def handle_permit_user(client: Client, message: Message):
     userId = message.from_user.id
     permitUser = await db.get_permit_user(Config.ADMIN[0])
+    print(userId)
+    print(permitUser)
     if userId in list(map(int, permitUser)) or userId in Config.ADMIN:
         return await message.continue_propagation()
     
