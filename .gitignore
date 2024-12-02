@@ -1,5 +1,7 @@
 # Ignore Python byte-compiled files
 __pycache__/
+downloads/
+metadata/
 
 # Ignore .jpg files
 *.jpg
