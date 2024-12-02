@@ -1,7 +1,7 @@
 import os
 import shutil
 import time
-from pyrogram import Client, filters
+from pyrogram import Client
 from pyrogram.types import (
     CallbackQuery,
     InlineKeyboardButton,
