@@ -142,7 +142,7 @@ async def is_autorename(_, client, message):
 
 
 # Example Usage:
-filename = "Naruto Shippuden S01 - EP07 - 1080p [Dual Audio] @Madflix_Bots.mkv"
+filename = "Naruto Shippuden S01 - EP07 - 1080p [Dual Audio] @Klands.mkv"
 episode_number = extract_episode_number(filename)
 print(f"Extracted Episode Number: {episode_number}")
 
@@ -232,14 +232,15 @@ async def auto_rename_files(client, message):
     if user_id not in temp.AUTO_RENAME_QUEUE:
         temp.AUTO_RENAME_QUEUE[user_id] = []
     
+    ms = await message.reply_text("> ** ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ǫᴜᴇᴜᴇ ✅ **", reply_to_message_id=message.id)
     temp.AUTO_RENAME_QUEUE[user_id].append({
     "file_id": file_id,
     "file_name": file_name,
     "media_type": media_type,
     "message_id": message.id,
+    "to_edit": ms.id,
     "format_template": format_template,
     "target_channel": target_channel
     })
 
-    await message.reply_text("> ** ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ǫᴜᴇᴜᴇ ✅ **", reply_to_message_id=message.id)
 

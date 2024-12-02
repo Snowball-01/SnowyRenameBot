@@ -31,15 +31,15 @@ async def cd_handler(client: Client, query: CallbackQuery):
                 [
                     [
                         InlineKeyboardButton(
-                            "⛅ ᴜᴘᴅᴀᴛᴇ", url="https://t.me/Kdramaland"
+                            "ᴜᴘᴅᴀᴛᴇ", url="https://t.me/Kdramaland"
                         ),
-                        InlineKeyboardButton("🌨️ sᴜᴘᴘᴏʀᴛ", url="https://t.me/SnowDevs"),
+                        InlineKeyboardButton("sᴜᴘᴘᴏʀᴛ", url="https://t.me/SnowDevs"),
                     ],
                     [
-                        InlineKeyboardButton("❗ ʜᴇʟᴘ", callback_data="help"),
-                        InlineKeyboardButton("❄️ ᴀʙᴏᴜᴛ", callback_data="about"),
+                        InlineKeyboardButton("ʜᴇʟᴘ", callback_data="help"),
+                        InlineKeyboardButton(" ᴀʙᴏᴜᴛ", callback_data="about"),
                     ],
-                    [InlineKeyboardButton("⚙️ sᴇʀᴠᴇʀ sᴛᴀᴛs", callback_data="stats")],
+                    [InlineKeyboardButton("sᴇʀᴠᴇʀ sᴛᴀᴛs", callback_data="stats")],
                 ]
             ),
         )
@@ -63,21 +63,38 @@ async def cd_handler(client: Client, query: CallbackQuery):
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton("🖼️ ᴛʜᴜᴍʙɴᴀɪʟ", callback_data="thumbnail"),
-                        InlineKeyboardButton("✏️ ᴄᴀᴘᴛɪᴏɴ", callback_data="caption"),
+                        InlineKeyboardButton("ᴀᴜᴛᴏʀᴇɴᴀᴍᴇ", callback_data="autorename")
+                    ],
+                    [
+                        InlineKeyboardButton("ᴛʜᴜᴍʙɴᴀɪʟ", callback_data="thumbnail"),
+                        InlineKeyboardButton("ᴄᴀᴘᴛɪᴏɴ", callback_data="caption"),
                     ],
                     [
                         InlineKeyboardButton(
-                            "⌨ ғɪʟᴇ sᴇǫᴜᴇɴᴄᴇ", callback_data="sequence"
+                            "ғɪʟᴇ sᴇǫᴜᴇɴᴄᴇ", callback_data="sequence"
                         ),
                         InlineKeyboardButton(
-                            "📟 ᴍᴇᴛᴀᴅᴀᴛᴀ", callback_data="howmetadata"
+                            "ᴍᴇᴛᴀᴅᴀᴛᴀ", callback_data="howmetadata"
                         ),
                     ],
                     [
-                        InlineKeyboardButton("🏠 ʜᴏᴍᴇ", callback_data="home"),
-                        InlineKeyboardButton("💰 ᴅᴏɴᴀᴛᴇ", callback_data="donate"),
+                        InlineKeyboardButton("ʜᴏᴍᴇ", callback_data="home"),
+                        InlineKeyboardButton("ᴅᴏɴᴀᴛᴇ", callback_data="donate"),
                     ],
+                ]
+            ),
+        )
+    
+    elif data == "autorename":
+        await query.message.edit_text(
+            text=Txt.AUTO_RENAME_TEXT,
+            disable_web_page_preview=True,
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton("✘ ᴄʟᴏsᴇ", callback_data="close"),
+                        InlineKeyboardButton("⟪ ʙᴀᴄᴋ", callback_data="help"),
+                    ]
                 ]
             ),
         )

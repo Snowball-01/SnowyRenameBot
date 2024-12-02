@@ -35,8 +35,6 @@ async def forces_sub(client:Client, message:Message):
 async def handle_permit_user(client: Client, message: Message):
     userId = message.from_user.id
     permitUser = await db.get_permit_user(Config.ADMIN[0])
-    print(userId)
-    print(permitUser)
     if userId in list(map(int, permitUser)) or userId in Config.ADMIN:
         return await message.continue_propagation()
     

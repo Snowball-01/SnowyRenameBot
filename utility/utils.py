@@ -1,8 +1,8 @@
 import os
 import re
+import sys
 import math, time
 from datetime import datetime
-import humanize
 from pytz import timezone
 from config import Config, Txt
 from pyrogram import Client
@@ -143,11 +143,9 @@ async def uploadFiles(
     - file_id: Optional unique identifier for the file.
     """
     try:
-        # Determine the target channel
-        target_channel = target_channel or Config.LOG_CHANNEL
 
         # Handle files larger than 2GB
-        if media.file_size < 2000 * 1024 * 1024:
+        if media.file_size > 2000 * 1024 * 1024:
             if user_bot:
                 app = await start_clone_bot(user_client(user_bot['session']))
             else:
@@ -156,7 +154,7 @@ async def uploadFiles(
             # Upload with user bot
             if type == "document":
                 filw = await app.send_document(
-                    target_channel,
+                    Config.LOG_CHANNEL,
                     document=metadata_path if bool_metadata else file_path,
                     thumb=ph_path,
                     caption=caption,
@@ -165,7 +163,7 @@ async def uploadFiles(
                 )
             elif type == "video":
                 filw = await app.send_video(
-                    target_channel,
+                    Config.LOG_CHANNEL,
                     video=metadata_path if bool_metadata else file_path,
                     caption=caption,
                     thumb=ph_path,
@@ -177,7 +175,7 @@ async def uploadFiles(
                 )
             elif type == "audio":
                 filw = await app.send_audio(
-                    target_channel,
+                    Config.LOG_CHANNEL,
                     audio=metadata_path if bool_metadata else file_path,
                     caption=caption,
                     thumb=ph_path,
@@ -188,7 +186,15 @@ async def uploadFiles(
 
             # Copy message and clean up
             from_chat, mg_id = filw.chat.id, filw.id
-            await bot.copy_message(message.chat.id, from_chat, mg_id)
+            if target_channel and target_channel[0]:
+                for id in target_channel:
+                    try:
+                        await bot.copy_message(id, from_chat, mg_id)
+                    except:
+                        await bot.copy_message(message.chat.id, from_chat, mg_id)        
+            else:
+                await bot.copy_message(message.chat.id, from_chat, mg_id)
+
             await ms.delete()
             await bot.delete_messages(from_chat, mg_id)
             if user_bot:
@@ -197,38 +203,114 @@ async def uploadFiles(
         # Upload directly for files <= 2GB
         else:
             if type == "document":
-                await bot.send_document(
-                    message.chat.id,
-                    document=metadata_path if bool_metadata else file_path,
-                    thumb=ph_path,
-                    caption=caption,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
-                )
+                if target_channel and target_channel[0]:
+                    for id in target_channel:
+                        try:
+                            await bot.send_document(
+                            id,
+                            document=metadata_path if bool_metadata else file_path,
+                            thumb=ph_path,
+                            caption=caption,
+                            progress=progress_for_pyrogram,
+                            progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                        )
+                        except:
+                            await bot.send_document(
+                            message.chat.id,
+                            document=metadata_path if bool_metadata else file_path,
+                            thumb=ph_path,
+                            caption=caption,
+                            progress=progress_for_pyrogram,
+                            progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                        )
+
+                else:
+
+                    await bot.send_document(
+                        message.chat.id,
+                        document=metadata_path if bool_metadata else file_path,
+                        thumb=ph_path,
+                        caption=caption,
+                        progress=progress_for_pyrogram,
+                        progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                    )
             elif type == "video":
-                await bot.send_video(
-                    message.chat.id,
-                    video=metadata_path if bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    width=width,
-                    height=height,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
-                )
+                if target_channel and target_channel[0]:
+                    for id in target_channel:
+                        try:
+                            await bot.send_video(
+                            id,
+                            video=metadata_path if bool_metadata else file_path,
+                            caption=caption,
+                            thumb=ph_path,
+                            width=width,
+                            height=height,
+                            duration=duration,
+                            progress=progress_for_pyrogram,
+                            progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                        )
+                        except:
+                            await bot.send_video(
+                            message.chat.id,
+                            video=metadata_path if bool_metadata else file_path,
+                            caption=caption,
+                            thumb=ph_path,
+                            width=width,
+                            height=height,
+                            duration=duration,
+                            progress=progress_for_pyrogram,
+                            progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                        )
+                else:
+                    await bot.send_video(
+                        message.chat.id,
+                        video=metadata_path if bool_metadata else file_path,
+                        caption=caption,
+                        thumb=ph_path,
+                        width=width,
+                        height=height,
+                        duration=duration,
+                        progress=progress_for_pyrogram,
+                        progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                    )
             elif type == "audio":
-                await bot.send_audio(
-                    message.chat.id,
-                    audio=metadata_path if bool_metadata else file_path,
-                    caption=caption,
-                    thumb=ph_path,
-                    duration=duration,
-                    progress=progress_for_pyrogram,
-                    progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
-                )
+                if target_channel and target_channel[0]:
+                    for id in target_channel:
+
+                        try:
+                            await bot.send_audio(
+                            id,
+                            audio=metadata_path if bool_metadata else file_path,
+                            caption=caption,
+                            thumb=ph_path,
+                            duration=duration,
+                            progress=progress_for_pyrogram,
+                            progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                        )
+                        except:
+                            await bot.send_audio(
+                            message.chat.id,
+                            audio=metadata_path if bool_metadata else file_path,
+                            caption=caption,
+                            thumb=ph_path,
+                            duration=duration,
+                            progress=progress_for_pyrogram,
+                            progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                        )
+
+                else:
+                    await bot.send_audio(
+                        message.chat.id,
+                        audio=metadata_path if bool_metadata else file_path,
+                        caption=caption,
+                        thumb=ph_path,
+                        duration=duration,
+                        progress=progress_for_pyrogram,
+                        progress_args=("🌨️ ** ᴜᴘʟᴏᴀᴅɪɴɢ sᴛᴀʀᴛᴇᴅ.... **", ms, time.time())
+                    )
 
     except Exception as e:
+        print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno), type(e).__name__, e)
         await ms.edit(f"Error: {e}")
         
         # Clean up files

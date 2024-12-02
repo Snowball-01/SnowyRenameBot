@@ -1,4 +1,4 @@
-import sys
+import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from config import temp
@@ -16,21 +16,42 @@ async def startQueue(client: Client, message: Message):
     if userId in temp.USERS_IN_QUEUE:
         return await message.reply_text("> ** Please wait for the current queue to complete before attempting to start a new one. **")
     
-    temp.AUTO_RENAME_QUEUE[userId].sort(key= lambda x: x["file_name"])
-
+    # Sort the queue
+    temp.AUTO_RENAME_QUEUE[userId].sort(key=lambda x: x["file_name"])
     temp.USERS_IN_QUEUE.append(userId)
-    for item in temp.AUTO_RENAME_QUEUE[userId]:
+
+    queued_files = temp.AUTO_RENAME_QUEUE[userId]
+
+    async def process_file_with_delay(index, file_item):
+        # Introduce a delay based on the index within the group
+        await asyncio.sleep(index * 5)
         try:
-            await autoRenameFunc(client, message, item["format_template"], item["target_channel"], item["file_id"], item["file_name"], item["media_type"], int(item["message_id"]))
+            await autoRenameFunc(
+                client, message, file_item["format_template"], file_item["target_channel"],
+                file_item["file_id"], file_item["file_name"], file_item["media_type"],
+                int(file_item["message_id"]), int(file_item["to_edit"])
+            )
         except Exception as e:
             await message.reply_text(f"> **Error** : {e}")
-            break
-    
-    await message.reply_text(
-        "<b>ᴀʟʟ ǫᴜᴇᴜᴇᴅ ғɪʟᴇs ʜᴀᴠᴇ ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ ʀᴇɴᴀᴍᴇᴅ. ✅</b>\n\n"
-        "<b> 🍀 Developer </b> <a href=https://t.me/Snowball_official>ѕησωвαℓℓ ❄️</a>",
-        disable_web_page_preview=True,
-    )
-    ## Clearing Queues
-    del temp.AUTO_RENAME_QUEUE[userId]
-    temp.USERS_IN_QUEUE.remove(userId)
+
+    try:
+        for i in range(0, len(queued_files), 4):  # Process in chunks of 3
+            group = queued_files[i:i + 4]
+            tasks = [
+                asyncio.create_task(process_file_with_delay(index, file_item))
+                for index, file_item in enumerate(group)
+            ]
+            # Wait for the current group of tasks to complete
+            await asyncio.gather(*tasks)
+    except Exception as e:
+        await message.reply_text(f"> **Error** : {e}")
+    else:
+        await message.reply_text(
+            "<b>ᴀʟʟ ǫᴜᴇᴜᴇᴅ ғɪʟᴇs ʜᴀᴠᴇ ʙᴇᴇɴ sᴜᴄᴄᴇssғᴜʟʟʏ ʀᴇɴᴀᴍᴇᴅ. ✅</b>\n\n"
+            "<b> 🍀 Developer </b> <a href=https://t.me/Snowball_official>ѕησωвαℓℓ ❄️</a>",
+            disable_web_page_preview=True,
+        )
+    finally:
+        # Clear the queue and remove user from the active users list
+        del temp.AUTO_RENAME_QUEUE[userId]
+        temp.USERS_IN_QUEUE.remove(userId)

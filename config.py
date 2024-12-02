@@ -88,6 +88,31 @@ Use These Keywords To Setup Custom File Name
 ║╰━━━━━━━━━━━━━━━➣
 ╚══════════════════❍⊱❁۪۪        
 """
+
+    AUTO_RENAME_TEXT = """**__SETUP AUTO RENAME FORMAT__**
+
+Use These Keywords To Setup Custom File Name
+
+✓ episode :- To Replace Episode Number
+✓ quality :- To Replace Video Resolution
+
+**➻ Example :** 
+
+> • ** Step 1: Use the /setrenameformat command. **
+** This will prompt you to set a renaming format. **
+
+For example:
+`Naruto Shippuden S02 - EPepisode - quality [Dual Audio] - @Klands`
+
+> • ** Step 2: Set the trigger. **
+** The trigger is used to identify files for automatic renaming. If a file matches the trigger, it will be renamed according to the format you’ve set. **
+
+**__Note:__**
+
+> ** If no matching trigger is found, the system will prompt you to manually rename the file. ** \n
+> ** Ensure your trigger is relevant and specific to your file patterns for seamless renaming. **
+
+**➻ Your Current Auto Rename Format :** /seeformats """
     
     THUMBNAIL_TXT = """<b><u>🖼️  HOW TO SET THUMBNAIL</u></b>
     

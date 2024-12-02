@@ -48,13 +48,13 @@ async def start(client, message):
     await db.add_user(client, message)
     button = InlineKeyboardMarkup([[
         InlineKeyboardButton(
-            '⛅ ᴜᴘᴅᴀᴛᴇ', url='https://t.me/Kdramaland'),
+            'ᴜᴘᴅᴀᴛᴇ', url='https://t.me/Kdramaland'),
         InlineKeyboardButton(
-            '🌨️ sᴜᴘᴘᴏʀᴛ', url='https://t.me/SnowDevs')
+            'sᴜᴘᴘᴏʀᴛ', url='https://t.me/SnowDevs')
     ], [
-        InlineKeyboardButton('❗ ʜᴇʟᴘ', callback_data='help'),
-        InlineKeyboardButton('❄️ ᴀʙᴏᴜᴛ', callback_data='about')
-    ], [InlineKeyboardButton('⚙️ sᴇʀᴠᴇʀ sᴛᴀᴛs', callback_data='stats')]])
+        InlineKeyboardButton('ʜᴇʟᴘ', callback_data='help'),
+        InlineKeyboardButton('ᴀʙᴏᴜᴛ', callback_data='about')
+    ], [InlineKeyboardButton('sᴇʀᴠᴇʀ sᴛᴀᴛs', callback_data='stats')]])
     if Config.PICS:
         await message.reply_photo(random.choice(Config.PICS), caption=Txt.START_TXT.format(user.mention), reply_markup=button)
     else:

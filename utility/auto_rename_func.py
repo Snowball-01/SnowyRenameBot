@@ -16,7 +16,7 @@ from utility.utils import (
 import os
 
 
-async def autoRenameFunc(client, message, format_template, target_channel, file_id, file_name, media_type, messageId):
+async def autoRenameFunc(client, message, format_template, target_channel, file_id, file_name, media_type, messageId, to_edit_id):
     # Check whether the file is already being renamed or has been renamed recently
     if file_id in renaming_operations:
         elapsed_time = (datetime.now() - renaming_operations[file_id]).seconds
@@ -65,9 +65,11 @@ async def autoRenameFunc(client, message, format_template, target_channel, file_
         new_file_name = f"{format_template}{file_extension}"
         file_path = f"downloads/{message.from_user.id}/{new_file_name}"
         file = await client.get_messages(message.chat.id, messageId)
-        download_msg = await message.reply_text(
-            text="⚠️ __** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **__\n** ᴛʀʏɪɴɢ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ... **",
-            reply_to_message_id=messageId,
+        download_msg = await client.edit_message_text(
+            message.chat.id,
+            to_edit_id,
+            "⚠️ __** ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ... **__\n** ᴛʀʏɪɴɢ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ... **",
+            # reply_to_message_id=messageId,
         )
         
         try:
