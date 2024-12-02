@@ -12,5 +12,5 @@ metadata/
 *.log
 *.env
 # Ignore download folder (replace 'download' with the actual folder name if different)
-download/
+downloads/
 env/
