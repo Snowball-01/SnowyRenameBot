@@ -226,7 +226,7 @@ async def auto_rename_files(client, message):
             print("Format Template: ", format_template)
             print("Channel : ", target_channel)
     except Exception as e:
-        await manulaRenameFunc(client, message)
+        return await manulaRenameFunc(client, message)
         
     
     if user_id not in temp.AUTO_RENAME_QUEUE:
