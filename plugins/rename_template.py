@@ -161,7 +161,7 @@ async def delformats(client: Client, message: Message):
         )
 
     else:
-        await db.remove_rename_template(user_id, message.command[1])
+        await db.remove_rename_template(user_id, " ".join(message.command[1:]))
         return await message.reply_text(
-            f"**The Format Related To This `{message.command[1]}` Trigger Has Been Deleted Successfully ✅**"
+            f"**The Format Related To This `{' '.join(message.command[1:])}` Trigger Has Been Deleted Successfully ✅**"
         )
