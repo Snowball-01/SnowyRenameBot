@@ -24,8 +24,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
     text = "** ʏᴏᴜ ᴄᴀɴ ᴛᴏɢɢʟᴇ ᴛʜᴇ ᴍᴇᴛᴀᴅᴀᴛᴀ & ᴀᴜᴛᴏ-ʀᴇɴᴀᴍᴇ **"
 
     if data == "home":
-        await query.message.edit_text(
-            text=Txt.START_TXT.format(query.from_user.mention),
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.START_TXT),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -44,8 +44,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
             ),
         )
     elif data == "caption":
-        await query.message.edit_text(
-            text=Txt.CAPTION_TXT,
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.CAPTION_TXT),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -57,8 +57,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
             ),
         )
     elif data == "help":
-        await query.message.edit_text(
-            text=Txt.HELP_TXT.format(client.mention),
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.HELP_TXT.format(client.mention)),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -86,8 +86,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
         )
     
     elif data == "autorename":
-        await query.message.edit_text(
-            text=Txt.AUTO_RENAME_TEXT,
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.AUTO_RENAME_TEXT),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -128,8 +128,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
         )
 
     elif data == "donate":
-        await query.message.edit_text(
-            text=Txt.DONATE_TXT,
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.DONATE_TXT),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
@@ -142,8 +142,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
         )
 
     elif data == "thumbnail":
-        await query.message.edit_caption(
-            caption=Txt.THUMBNAIL_TXT,
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.THUMBNAIL_TXT),
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
@@ -155,8 +155,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
         )
 
     elif data == "sequence":
-        await query.message.edit_caption(
-            caption=Txt.FILE_SEQUENCE,
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.FILE_SEQUENCE),
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
@@ -168,8 +168,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
         )
 
     elif data == "howmetadata":
-        await query.message.edit_caption(
-            caption=Txt.HOW_METADATA_TXT,
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.HOW_METADATA_TXT),
             reply_markup=InlineKeyboardMarkup(
                 [
                     [
@@ -181,8 +181,8 @@ async def cd_handler(client: Client, query: CallbackQuery):
         )
 
     elif data == "about":
-        await query.message.edit_text(
-            text=Txt.ABOUT_TXT.format(client.mention),
+        await query.message.edit_media(
+            InputMediaPhoto(random.choice(Config.PICS), Txt.ABOUT_TXT.format(client.mention)),
             disable_web_page_preview=True,
             reply_markup=InlineKeyboardMarkup(
                 [
