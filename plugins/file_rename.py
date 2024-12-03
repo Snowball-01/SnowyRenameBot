@@ -232,15 +232,14 @@ async def auto_rename_files(client, message):
     if user_id not in temp.AUTO_RENAME_QUEUE:
         temp.AUTO_RENAME_QUEUE[user_id] = []
     
-    ms = await message.reply_text("> ** ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ǫᴜᴇᴜᴇ ✅ **", reply_to_message_id=message.id)
     temp.AUTO_RENAME_QUEUE[user_id].append({
     "file_id": file_id,
     "file_name": file_name,
     "media_type": media_type,
     "message_id": message.id,
-    "to_edit": ms.id,
     "format_template": format_template,
     "target_channel": target_channel
     })
 
+    await message.reply_text("> ** ғɪʟᴇ sᴜᴄᴄᴇssғᴜʟʟʏ ᴀᴅᴅᴇᴅ ᴛᴏ ᴛʜᴇ ǫᴜᴇᴜᴇ ✅ **", reply_to_message_id=message.id)
 

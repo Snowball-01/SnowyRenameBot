@@ -19,7 +19,7 @@ class Config(object):
     ADMIN       = [int(admin) if id_pattern.search(admin) else admin for admin in os.environ.get('ADMIN', '6065594762').split()] # ⚠️ Required
     FORCE_SUB   = os.environ.get("FORCE_SUB", "Kdramalanad") # ⚠️ Required Username without @
     LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1001971176803")) # ⚠️ Required must start with (-100)
-    PREMIUM = os.environ.get("PREMIUM", True)
+    PREMIUM = os.environ.get("PREMIUM", False)
 
     # wes response configuration
     WEBHOOK = os.environ.get("WEBHOOK", False)
